@@ -51,15 +51,22 @@ const App = () => {
           })
           .catch(error => {
             setNotificationStatus('error')
-            setNotificationMessage(`${newName} was deleted from the database`)
+            setNotificationMessage(error.response.data.error)
           })
       }
     } else {
       personService
         .create(person)
-        .then((newPerson) => setPersons(persons.concat(newPerson)));
-        setNotificationStatus('success')
-        setNotificationMessage(`${newName} was added to the phonebook`)
+        .then((newPerson) => {
+          setPersons(persons.concat(newPerson))
+          setNotificationStatus('success')
+          setNotificationMessage(`${newName} was added to the phonebook`)
+        })
+        .catch(error => {
+          setNotificationStatus('error')
+          setNotificationMessage(error.response.data.error.replace('Person validation failed: ', '').replace('name: ', '').replace('number: ', '').replace(',', '.'))
+        })
+        
     }
 
     setNewName("");
